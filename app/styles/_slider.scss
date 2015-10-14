@@ -1,66 +1,82 @@
-.horizontal-slider {
+.slider {
+
+  // height: 50px;
   width: 100%;
-  max-width: 500px;
-  height: 50px;
-  border: 1px solid grey;
-}
-
-.vertical-slider {
-  height: 380px;
-  width: 50px;
-  border: 1px solid grey;
-}
-
-.handle {
-  font-size: 0.9em;
-  text-align: center;
-  background-color: black;
-  color: white;
-  cursor: pointer;
-}
-
-.handle.active {
-  background-color: grey;
-}
-
-.bar {
   position: relative;
-  background: #ddd;
-}
 
-.bar.bar-1 {
-  background: #f00;
-}
+  &__range {
+    height: 5px;
+  }
 
-.bar.bar-2 {
-  background: #0f0;
-}
+  &__infos {
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
 
-.horizontal-slider .bar {
-  top: 20px;
-  height: 10px;
-}
+    h3 {
+      font-size: 17px;
+    }
 
-.horizontal-slider .handle {
-  top: 1px;
-  width: 50px;
-  height: 48px;
-  line-height: 48px;
-}
+    p {
+      text-align: right;
+      font-size: 13px;
+      position: relative;
+      top: 3px;
+    }
+  }
 
-.vertical-slider .handle {
-  left: 1px;
-  width: 48px;
-  line-height: 50px;
-}
+  &__handle {
 
-.vertical-slider .bar {
-  left: 20px;
-  width: 10px;
-}
+    transform: translate3d(0, -3px, 0);
+    // margin-right: 5px;
+    // top: -3px;
+    width: 11px;
+    height: 11px;
+    line-height: 50px;
+    text-align: center;
+    background: white;
+    color: white;
+    cursor: pointer;
+    border-radius: 100%;
 
-#horizontal-0,
-#horizontal-1, #horizontal-2, #horizontal-3,
-#vertical {
-  margin: 20px 10px;
+    &__value {
+      background-color: #7F7F7F;
+      padding: 2px 0;
+      border-radius: 3px;
+      font-size: 14px;
+      position: absolute;
+      padding: 4px 8px;
+      line-height: normal;
+      top: -35px;
+      opacity: 0;
+      transition: opacity 300ms ease;
+      transform: translateX(-50%);
+    }
+
+    &.active {
+      .slider__handle__value {
+        opacity: 1;
+      }
+    }
+
+  }
+
+  &__bar {
+
+    // top: 20px;
+    height: 5px;
+    position: relative;
+    background: rgba(255,255,255,.3);
+    border-radius: 3px;
+
+    &-1 {
+      background: rgba(255,255,255,.6);
+    }
+    &-2 {
+      background: rgba(255,255,255,.3);
+    }
+
+  }
+
 }

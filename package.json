@@ -1,6 +1,6 @@
 {
-  "name": "dailymotion-live-chat",
-  "version": "1.2.4",
+  "name": "movies-search",
+  "version": "1.0.0",
   "description": "",
   "keywords": [
     "react",
@@ -10,13 +10,11 @@
     "reflux",
     "react-router"
   ],
-  "main": "react-component/pages/App.js",
-  "browser": "react-component/pages/App.js",
   "scripts": {
     "start": "gulp",
     "test": "karma start"
   },
-  "author": "Dailymotion",
+  "author": "Pierre Goutheraud",
   "license": "MIT",
   "devDependencies": {
     "babel-core": "^5.8.25",
@@ -67,7 +65,8 @@
     "imports-loader": "^0.6.4",
     "jquery": "^2.1.4",
     "jquery-ui": "^1.10.5",
-    "react": "0.13.3",
+    "react": "^0.14.0",
+    "react-autosuggest": "^2.1.0",
     "react-dom": "^0.14.0",
     "react-onclickoutside": "^0.3.3",
     "react-slider": "^0.5.1",

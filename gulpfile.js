@@ -104,11 +104,6 @@ gulp.task('serve-dist', function() {
   });
 });
 
-function sass() {
-  return $.sass({
-      outputStyle: isProduction ? 'compressed' : 'expanded'
-    }).on('error', $.sass.logError);
-}
 var vendorsSources = [
   'node_modules/hint.css/hint.min.css',
   'node_modules/trackpad-scroll-emulator/css/trackpad-scroll-emulator.css',
@@ -125,7 +120,9 @@ gulp.task('styles', function(cb) {
                           app + 'styles/main.scss'
                         ])
                         .pipe((isProduction ? $.util.noop() : $.sourcemaps.init()))
-                        .pipe(sass())
+                        .pipe($.sass({
+                          outputStyle: isProduction ? 'compressed' : 'expanded'
+                        }).on('error', $.sass.logError))
                         .pipe($.autoprefixer({browsers: autoprefixerBrowsers}))
                         .pipe(isProduction ? $.util.noop() : $.sourcemaps.write());
 
