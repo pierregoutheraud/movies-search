@@ -1,7 +1,7 @@
 .sidebar {
   background-color: rgba(30,30,30,1);
-  height: 100%;
-  width: 400px;
+  min-width: 400px;
+  max-width: 400px;
   color: white;
 
   &__logo {

@@ -2,75 +2,164 @@ import React from 'react';
 import Slider from './components/Slider.jsx';
 import request from 'superagent';
 import Autosuggest from 'react-autosuggest';
+import tmdbSDK from './sdks/TmdbSDK.js';
+import _ from 'underscore';
 
 let Home = React.createClass({
 
   getInitialState: function() {
 
     let defaultState = {
+      movies: [],
       imdb: [0,10],
-      dates: [1900,2016]
+      dates: [1900,new Date().getFullYear()],
+      page: 1
     };
 
     let state = window.location.hash.replace('#', '') || null;
 
     if (state) {
       state = JSON.parse(state);
-      for (var key in defaultState) if (state.hasOwnProperty(key)) defaultState[key] = state[key]; // Merge two objects
+      for (let key in defaultState) if (state.hasOwnProperty(key)) defaultState[key] = state[key]; // Merge two objects
     }
-
-    console.log(defaultState);
 
     return defaultState;
   },
 
   componentWillMount: function() {
-    this.timeoutSaveURL = null;
+    this.timeoutRefresh = null;
+    this.fetchGenres();
   },
 
+  fetchGenres: function() {
+    tmdbSDK.fetchGenres().then((genres) => {
+      this.setState({genres});
+      this.refresh(true); // First refresh
+    });
+  },
+
+  refresh: function(direct=false) {
+
+    let fetch = () => {
+      console.log('refresh --> fetch()');
+      this.setState({ movies: [] }); // reset movies state
+      tmdbSDK.discover(this.state, (movie) => {
+        this.addMovie(movie);
+      });
+      // this.saveURL();
+    }
+
+    if (direct)
+      fetch();
+    else {
+      clearTimeout(this.timeoutRefresh);
+      this.timeoutRefresh = setTimeout(fetch, 1000);
+    }
+
+  },
+
+  addMovie: function(movie) {
+    let movies = this.state.movies;
+    movies.push(movie);
+    this.setState({
+      movies
+    });
+  },
 
   getSuggestions: function(input, callback) {
     const suburbs = ['Cheltenham', 'Mill Park', 'Mordialloc', 'Nunawading'];
-    const regex = new RegExp('^' + input, 'i');
+    const regex = new RegExp(input, 'ig');
     const suggestions = suburbs.filter(suburb => regex.test(suburb));
     callback(null, suggestions);
     // setTimeout(() => callback(null, suggestions), 300); // Emulate API call
   },
 
   onChangeDate: function(values) {
-    // this.setState({
-    //   dates: values
-    // });
-    this.saveURL({dates: values});
+    this.setState({
+      dates: values
+    }, () => {
+      this.refresh();
+    });
   },
 
   onChangeIMDBranking: function(values) {
-    // this.setState({
-    //   imdb: values
-    // });
-    this.saveURL({imdb: values});
+    this.setState({
+      imdb: values
+    }, () => {
+      this.refresh();
+    });
   },
 
   saveURL: function(object) {
-    clearTimeout(this.timeoutSaveURL);
-    this.timeoutSaveURL = setTimeout(() => {
+    // clearTimeout(this.timeoutSaveURL);
+    // this.timeoutSaveURL = setTimeout(() => {
       console.log('state saved to url');
       let json = window.location.hash.replace('#','');
       if (json)
         json = JSON.parse(json);
       else json = {};
-      for (var key in object)
-        json[key] = object[key];
+
+      let state = this.state;
+      let whitelist = [
+        'dates', 'imdb'
+      ];
+
+      state = _.pick(state, whitelist);
+
+      for (let key in state) {
+        json[key] = state[key];
+      }
       window.location.hash = JSON.stringify(json);
-    }, 1000);
+    // }, 1000);
   },
 
   render: function() {
 
     console.log('Home Render');
 
+    let genresOptions = null;
+    if (this.state.genres) {
+      genresOptions = this.state.genres.map((genre,i) => {
+        return <option key={i} >{ genre.name }</option>
+      });
+    }
+
+    let movies = null;
+    if (this.state.movies) {
+      movies = this.state.movies.map((movie,i) => {
+        // console.log(movie);
+        let posterURL = '';
+        if ( movie.poster_path ) posterURL = `http://image.tmdb.org/t/p/w500${movie.poster_path}`;
+        let stylePoster = {
+          backgroundImage: `url('${posterURL}')`
+        };
+        let year = movie.release_date.substring(0,4);
+
+        let genre = null;
+        if (movie.genres) {
+          genre = <span><span className="sep">/</span> {movie.genres[0]}</span>;
+        }
+
+        let rating = null;
+        if (movie.imdbRating) {
+          rating = <div className="movie__rank"><span className="movie__rank__imdb">IMDb</span> { movie.imdbRating }<span className="movie__rank__ten">/ 10</span></div>;
+        }
+
+        return (
+          <a href={ movie.imdbURL } target="_blank" className="movie" key={"movie"+i}>
+            { rating }
+            <div className="movie__poster" style={stylePoster} ></div>
+            <div className="movie__infos">
+              <p className="movie__infos__title clamp-css" title={movie.original_title} >{movie.original_title}</p>
+              <p className="movie__infos__sub" >{year} {genre}</p>
+            </div>
+          </a>
+        );
+      });
+    }
+
     return (
-      <div className="app">
+      <div className="app__content">
 
         <div className="sidebar">
 
@@ -109,6 +198,7 @@ let Home = React.createClass({
             <fieldset>
               <select className="input" >
                 <option>Genre</option>
+                { genresOptions }
               </select>
             </fieldset>
 
@@ -125,9 +215,11 @@ let Home = React.createClass({
 
         </div>
 
-        <div className="movies">
+        <div className="content">
 
-          <ul></ul>
+          <div className="movies">
+            { movies }
+          </div>
 
         </div>
 

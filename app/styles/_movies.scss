@@ -1,0 +1,90 @@
+.movies {
+  padding: 30px 10px;
+  display: flex;
+  flex-wrap: wrap;
+  // justify-content: center;
+  justify-content: space-around;
+
+  .movie {
+    width: 235px;
+    height: 400px;
+    margin: 0px 10px 40px 10px;
+    position: relative;
+    display: block;
+    text-decoration: none;
+
+    &__rank {
+
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      color: white;
+      background-color: rgba($imdb, .85) ;
+      border-radius: 2px;
+      padding: 3px 10px 4px;
+      font-size: 18px;
+      font-weight: 700;
+
+      &__imdb {
+        font-size: 14px;
+        color: $black;
+        font-weight: 900;
+        letter-spacing: -1px;
+        margin-right: 2px;
+        display: none;
+      }
+
+      &:before {
+        content: '';
+        display: inline-block;
+        height: 11px;
+        background-image: url("../images/imdb.svg");
+        width: 28px;
+        background-repeat: no-repeat;
+        background-size: contain;
+        margin-right: 5px;
+        display: none;
+      }
+
+      &__ten {
+        margin-left: 3px;
+        font-size: 11px;
+        // display: none;
+      }
+    }
+
+    &__poster {
+      width: 235px;
+      height: 350px;
+      border-radius: 4px;
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-color: $black;
+    }
+
+    &__infos {
+      // text-align: center;
+      margin-top: 10px;
+      padding-left: 10px;
+
+      &__title {
+        font-size: 18px;
+        color: $black;
+        font-weight: 600;
+      }
+
+      &__sub {
+        font-size: 15px;
+        font-weight: 400;
+        color: rgba(0,0,0,.5);
+        .sep {
+          font-size: 10px;
+          position: relative;
+          top: -2px;
+        }
+      }
+    }
+
+  }
+}
